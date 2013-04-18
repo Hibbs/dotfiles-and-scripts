@@ -1,14 +1,31 @@
 
-setopt prompt_subst
+# setopt prompt_subst
 
-gs_modified=${#${$(git status -z)//[^M]/}}
-gs_untracked=${#${$(git status -z)//[^?]/}}
+prompt_nl=$'\n%{\r%}'
 
-prompt_hibbs_setup () {
-  gs_modified=${#${$(git status -z)//[^M]/}}
-  gs_untracked=${#${$(git status -z)//[^?]/}}
+separator_l=$'\u2b80'
+separator_r=$'\u2b82'
+
+path_color="green"
+path_sep_color="blue"
+curr_dir_color="yellow"
+
+com_color="white"
+
+color1="white"
+color2="yellow"
+color3="green"
+color4="white"
+
+path_string() {
+	print -Pn "%S${separator_l}"
 }
 
+prompt_hibbs_setup () {
+	pwd_string="%F{${color1}}${$(pwd):h}/%B${$(pwd):t}%b"
+	pwd_string=$(echo $pwd_string | sed "s:/:%F{${color4}}/%F{${color1}}:g")
+	PROMPT="${pwd_string}${prompt_nl}%F{white}> "
+}
 
-PROMPT="%d > "
-RPROMPT="[M:$gs_modified U:$gs_untracked]"
+autoload -U add-zsh-hook
+add-zsh-hook precmd prompt_hibbs_setup
